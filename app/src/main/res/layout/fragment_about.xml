@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dimen_400dp"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:background="@color/colorPrimary">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:layout_width="@dimen/dimen_100dp"
+            android:layout_height="@dimen/dimen_100dp"
+            android:src="@drawable/ic_launcher"
+            app:civ_border_color="@color/white"
+            app:civ_border_width="@dimen/dimen_2sp"
+            app:civ_border_overlay="true"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Version 1.0"
+            android:textColor="@color/white"
+            android:gravity="center"
+            android:layout_margin="@dimen/dimen_10dp"
+            android:textSize="@dimen/dimen_30sp"/>
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="安卓©2021年大作业"
+        android:textSize="@dimen/dimen_40sp"
+        android:textColor="@color/colorPrimary"
+        />
+
+    <android.support.v7.widget.CardView
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_width="match_parent"
+        app:cardCornerRadius="@dimen/dimen_10dp"
+        app:cardElevation="@dimen/dimen_10dp">
+
+        <TextView
+            android:id="@+id/tv_app_des"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/app_description"
+            android:textColor="@color/text_color"
+            android:layout_margin="15dp"
+            android:textSize="@dimen/dimen_36sp"/>
+
+    </android.support.v7.widget.CardView>
+
+</LinearLayout>
