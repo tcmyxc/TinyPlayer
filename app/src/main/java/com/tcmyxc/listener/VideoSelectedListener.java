@@ -1,4 +1,4 @@
-package com.tcmyxc.adapter;
+package com.tcmyxc.listener;
 
 import com.tcmyxc.model.sohu.Video;
 

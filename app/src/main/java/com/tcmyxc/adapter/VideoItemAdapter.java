@@ -10,9 +10,9 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 
 import com.tcmyxc.R;
+import com.tcmyxc.listener.VideoSelectedListener;
 import com.tcmyxc.model.VideoList;
 import com.tcmyxc.model.sohu.Video;
-import com.tcmyxc.util.LOG;
 
 /**
  * @author : 徐文祥
@@ -76,8 +76,8 @@ public class VideoItemAdapter extends BaseAdapter {
             holder.videoTitleBtn.setText(String.valueOf(position + 1));
         }
         // 首次进入页面，需要默认选中第一集
-        if(isFirst){
-            listener.onVideoSelected(video, 0);
+        if(isFirst && position == 0){
+            listener.onVideoSelected(video, position);
             isFirst = false;
         }
         // 设置集数按钮点击事件

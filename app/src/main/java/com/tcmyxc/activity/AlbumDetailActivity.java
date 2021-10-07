@@ -15,8 +15,8 @@ import android.widget.Toast;
 
 import com.tcmyxc.AppManager;
 import com.tcmyxc.R;
-import com.tcmyxc.api.GetAlbumDetailListener;
-import com.tcmyxc.api.GetVideoPlayUrlListener;
+import com.tcmyxc.listener.GetAlbumDetailListener;
+import com.tcmyxc.listener.GetVideoPlayUrlListener;
 import com.tcmyxc.api.SohuApi;
 import com.tcmyxc.fragment.AlbumPlayGridFragment;
 import com.tcmyxc.model.Album;

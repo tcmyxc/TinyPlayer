@@ -11,7 +11,7 @@ import android.widget.Toast;
 
 import com.tcmyxc.R;
 import com.tcmyxc.adapter.DetailListAdapter;
-import com.tcmyxc.api.GetChannelAlbumListener;
+import com.tcmyxc.listener.GetChannelAlbumListener;
 import com.tcmyxc.api.SohuApi;
 import com.tcmyxc.model.Album;
 import com.tcmyxc.model.AlbumList;

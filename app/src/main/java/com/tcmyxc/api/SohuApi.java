@@ -3,6 +3,10 @@ package com.tcmyxc.api;
 import android.text.TextUtils;
 
 import com.tcmyxc.AppManager;
+import com.tcmyxc.listener.GetAlbumDetailListener;
+import com.tcmyxc.listener.GetChannelAlbumListener;
+import com.tcmyxc.listener.GetVideoListener;
+import com.tcmyxc.listener.GetVideoPlayUrlListener;
 import com.tcmyxc.model.Album;
 import com.tcmyxc.model.AlbumList;
 import com.tcmyxc.model.Channel;

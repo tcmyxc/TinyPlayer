@@ -9,8 +9,8 @@ import android.view.View;
 
 import com.tcmyxc.R;
 import com.tcmyxc.adapter.VideoItemAdapter;
-import com.tcmyxc.adapter.VideoSelectedListener;
-import com.tcmyxc.api.GetVideoListener;
+import com.tcmyxc.listener.VideoSelectedListener;
+import com.tcmyxc.listener.GetVideoListener;
 import com.tcmyxc.api.SohuApi;
 import com.tcmyxc.model.Album;
 import com.tcmyxc.model.ErrorInfo;
@@ -67,7 +67,7 @@ public class AlbumPlayGridFragment extends BaseFragment{
 
     private VideoSelectedListener videoSelectedListener = new VideoSelectedListener() {
         @Override
-        public void onVideoSelected(Video video, final int position) {
+        public void onVideoSelected(Video video, int position) {
             if(customGridView != null) {
                 // 选中点的一集
                 LOG.d(TAG + ": videoSelectedListener，选中的集数是: " + position);
