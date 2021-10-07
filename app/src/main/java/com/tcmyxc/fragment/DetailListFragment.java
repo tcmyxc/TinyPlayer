@@ -64,7 +64,7 @@ public class DetailListFragment extends BaseFragment {
             mSiteId = getArguments().getInt(SITE_ID);
             mChannelId = getArguments().getInt(CHANNEL_ID);
         }
-        LOG.d("siteId is " + mSiteId + ", channelId is " + mChannelId);
+        // LOG.d("siteId is " + mSiteId + ", channelId is " + mChannelId);
         pageNo = 0;
         adapter = new DetailListAdapter(getActivity(), new Channel(mChannelId, getActivity()));
         loadData();// 初次加载数据
@@ -110,9 +110,9 @@ public class DetailListFragment extends BaseFragment {
 
     private void loadData() {
         pageNo++;
-        LOG.d(this.getClass().getName() + ".loadData: " + "pageNo is " + pageNo);
+        // LOG.d(this.getClass().getName() + ".loadData: " + "pageNo is " + pageNo);
         // 请求结口，加载更多数据
-        new SohuApi().onGetChannelAlbums(new Channel(mChannelId, getActivity()), pageNo, pageSize, new GetChannelAlbumListener() {
+        SohuApi.onGetChannelAlbums(new Channel(mChannelId, getActivity()), pageNo, pageSize, new GetChannelAlbumListener() {
             @Override
             public void onGetChannelAlbumSuccess(AlbumList albumList) {
                 LOG.i("albumList size: " + albumList.size());

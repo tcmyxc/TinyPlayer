@@ -52,5 +52,19 @@ public class AppManager extends Application {
         return networkInfo != null && networkInfo.isConnected();
     }
 
+    // 判断是不是连的wifi
+    public static boolean isNetWorkWifiAvailable() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getNetworkInfo(1);
+        if(networkInfo != null){
+            NetworkInfo.State state = networkInfo.getState();
+            if(state == NetworkInfo.State.CONNECTING || state == NetworkInfo.State.CONNECTED){
+                return true;
+            }
+        }
+
+        return false;
+    }
+
 
 }

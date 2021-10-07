@@ -13,6 +13,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.tcmyxc.R;
+import com.tcmyxc.activity.AlbumDetailActivity;
 import com.tcmyxc.model.Album;
 import com.tcmyxc.model.AlbumList;
 import com.tcmyxc.model.Channel;
@@ -21,7 +22,7 @@ import com.tcmyxc.util.ImageUtil;
 /**
  * @author : 徐文祥
  * @date : 2021/10/3 17:21
- * @description : todo
+ * @description : DetailListAdapter
  */
 public class DetailListAdapter extends RecyclerView.Adapter {
 
@@ -76,6 +77,26 @@ public class DetailListAdapter extends RecyclerView.Adapter {
             else {
                 // TODO 默认图
             }
+
+            // 设置九宫格的点击事件
+            int channelId = channel.getChannelId();
+            itemViewHolder.container.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    switch (channelId){
+                        case Channel.DOCUMENTARY:
+                        case Channel.COMIC:
+                        case Channel.MOVIE:
+                        case Channel.VARIETY:
+                        case Channel.MUSIC:
+                            AlbumDetailActivity.launch((Activity) context, album, 0, true);
+                            break;
+                        default:
+                            AlbumDetailActivity.launch((Activity) context, album);
+                            break;
+                    }
+                }
+            });
         }
 
     }
@@ -101,7 +122,7 @@ public class DetailListAdapter extends RecyclerView.Adapter {
 
     public class ItemViewHolder extends RecyclerView.ViewHolder {
 
-        private LinearLayout linearLayout;
+        private LinearLayout container;
         private ImageView albumPoster;
         private TextView albumTip;
         private TextView albumName;
@@ -109,7 +130,7 @@ public class DetailListAdapter extends RecyclerView.Adapter {
         public ItemViewHolder(@NonNull View view) {
             super(view);
             // 绑定视图下的组件
-            linearLayout = view.findViewById(R.id.album_container);
+            container = view.findViewById(R.id.album_container);
             albumPoster = view.findViewById(R.id.iv_album_poster);
             albumTip = view.findViewById(R.id.tv_album_tip);
             albumName = view.findViewById(R.id.tv_album_name);

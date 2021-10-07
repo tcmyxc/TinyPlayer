@@ -4,10 +4,10 @@ import com.google.gson.annotations.Expose;
 
 /**
  * @author : 徐文祥
- * @date : 2021/10/3 19:15
- * @description : 搜狐频道数据返回类（列表页面）
+ * @date : 2021/10/5 22:21
+ * @description : 视频数据返回结果
  */
-public class Result {
+public class VideoResult {
 
     @Expose
     private long status;
@@ -15,9 +15,8 @@ public class Result {
     @Expose
     private String statusText;
 
-    // 数据结果，列表页面
     @Expose
-    private Data data;
+    private VideoData data;
 
     public long getStatus() {
         return status;
@@ -35,11 +34,20 @@ public class Result {
         this.statusText = statusText;
     }
 
-    public Data getData() {
+    public VideoData getData() {
         return data;
     }
 
-    public void setData(Data data) {
+    public void setData(VideoData data) {
         this.data = data;
+    }
+
+    @Override
+    public String toString() {
+        return "VideoResult{" +
+                "status=" + status +
+                ", statusText='" + statusText + '\'' +
+                ", data=" + data +
+                '}';
     }
 }

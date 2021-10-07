@@ -6,7 +6,7 @@ import com.tcmyxc.model.ErrorInfo;
 /**
  * @author : 徐文祥
  * @date : 2021/10/3 17:50
- * @description : todo
+ * @description : ChannelAlbumListener
  */
 public interface GetChannelAlbumListener {
 

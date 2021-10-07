@@ -42,7 +42,7 @@ public class ResultAlbum {
 
     @SerializedName("latest_video_count")
     @Expose
-    private int lastVideoCount;// 专辑最新更新的集数
+    private int lastVideoCount;// 专辑最新的集数
 
     @SerializedName("total_video_count")
     @Expose

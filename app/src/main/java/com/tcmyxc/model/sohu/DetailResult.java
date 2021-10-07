@@ -5,9 +5,9 @@ import com.google.gson.annotations.Expose;
 /**
  * @author : 徐文祥
  * @date : 2021/10/3 19:15
- * @description : 搜狐频道数据返回类（列表页面）
+ * @description : 详情页面数据类
  */
-public class Result {
+public class DetailResult {
 
     @Expose
     private long status;
@@ -15,9 +15,9 @@ public class Result {
     @Expose
     private String statusText;
 
-    // 数据结果，列表页面
+    // 详情页面
     @Expose
-    private Data data;
+    private ResultAlbum data;
 
     public long getStatus() {
         return status;
@@ -35,11 +35,11 @@ public class Result {
         this.statusText = statusText;
     }
 
-    public Data getData() {
+    public ResultAlbum getData() {
         return data;
     }
 
-    public void setData(Data data) {
+    public void setData(ResultAlbum data) {
         this.data = data;
     }
 }
