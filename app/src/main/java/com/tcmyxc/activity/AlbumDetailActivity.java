@@ -78,6 +78,7 @@ public class AlbumDetailActivity extends BaseActivity {
 
     @Override
     protected void initView() {
+        LOG.d(TAG + ": initView");
         Intent intent = getIntent();
         album = intent.getParcelableExtra("album");
         videoNo = intent.getIntExtra("videoNo", 0);
@@ -128,7 +129,7 @@ public class AlbumDetailActivity extends BaseActivity {
     };
 
     private void handleButtonClick(View view) {
-        LOG.i(TAG + " 点击了播放按钮");
+        LOG.i(TAG + ": handleButtonClick，点击了播放按钮");
         Button btn = (Button) view;
         String url = (String) btn.getTag(R.id.key_video_url);
         int type = (int) btn.getTag(R.id.key_video_stream);
@@ -149,10 +150,10 @@ public class AlbumDetailActivity extends BaseActivity {
         }
     }
 
-    @Override
-    protected void initData() {
+    private void updateInfo(){
         albumName.setText(album.getTitle());
 
+        // 导演
         if (!TextUtils.isEmpty(album.getDirector())) {
             albumDirector.setText("导演: " + album.getDirector());
             albumDirector.setVisibility(View.VISIBLE);
@@ -160,6 +161,7 @@ public class AlbumDetailActivity extends BaseActivity {
             albumDirector.setVisibility(View.GONE);
         }
 
+        // 主演
         if (!TextUtils.isEmpty(album.getMainActor())) {
             albumMainActor.setText("主演: " + album.getMainActor());
             albumMainActor.setVisibility(View.VISIBLE);
@@ -177,15 +179,26 @@ public class AlbumDetailActivity extends BaseActivity {
 
         // 海报图（搜狐只有竖图）
         ImageUtil.disPlayImage(albumImage, album.getVerImgUrl());
+    }
+
+    @Override
+    protected void initData() {
+        LOG.d(TAG + ": initData");
+        updateInfo();
 
         SohuApi.getAlbumDetail(album, new GetAlbumDetailListener() {
             @Override
-            public void onGetAlbumDetailSuccess(final Album album) {
-                // LOG.i( TAG + ".initData " + "总集数是 " + album.getVideoTotal());
+            public void onGetAlbumDetailSuccess(final Album albm) {
+                LOG.i( TAG + ".initData " + "总集数是 " + album.getVideoTotal());
+                LOG.i( TAG + ".initData: currentVideoPosition " + currentVideoPosition);
+                album = albm;
+
                 // 在主线程中处理fragment控件
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        updateInfo();
+                        LOG.i( TAG + ".initData: 在主线程中处理fragment控件，currentVideoPosition " + currentVideoPosition);
                         // 处理显示集数或者详情的控件
                         fragment = AlbumPlayGridFragment.newInstance(album, isShow, 0);
                         fragment.setPlayVideoSelectedListener(playVideoSelectedListener);
@@ -235,7 +248,7 @@ public class AlbumDetailActivity extends BaseActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.album_detail_menu, menu);
-        return super.onCreateOptionsMenu(menu);
+        return true;
     }
 
     // 收藏
@@ -252,6 +265,7 @@ public class AlbumDetailActivity extends BaseActivity {
     private AlbumPlayGridFragment.PlayVideoSelectedListener playVideoSelectedListener = new AlbumPlayGridFragment.PlayVideoSelectedListener() {
         @Override
         public void OnPlayVideoSelected(Video video, final int position) {
+            LOG.d(TAG + ": OnPlayVideoSelected，选中的位置是 " + position);
             currentVideoPosition = position;
             SohuApi.getVideoPlayUrl(video, videoPlayUrlListener);
         }

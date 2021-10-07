@@ -50,6 +50,7 @@ public class AlbumPlayGridFragment extends BaseFragment{
     }
 
     public static AlbumPlayGridFragment newInstance(Album album, boolean isShowDesc, int initVideoPositon){
+        LOG.d(TAG + ": newInstance");
         AlbumPlayGridFragment fragment = new AlbumPlayGridFragment();
         // 存数据
         Bundle bundle = new Bundle();
@@ -69,7 +70,7 @@ public class AlbumPlayGridFragment extends BaseFragment{
         public void onVideoSelected(Video video, final int position) {
             if(customGridView != null) {
                 // 选中点的一集
-                LOG.d(TAG + ".videoSelectedListener: 选中的集数是: " + position);
+                LOG.d(TAG + ": videoSelectedListener，选中的集数是: " + position);
                 customGridView.setSelection(position);
                 customGridView.setItemChecked(position, true);
                 currentPosition = position;
@@ -89,6 +90,7 @@ public class AlbumPlayGridFragment extends BaseFragment{
 
     @Override
     protected void initView() {
+        LOG.d(TAG + ": initView");
         emptyView = bindViewId(R.id.tv_empty);
         emptyView.setVisibility(View.VISIBLE);
 
@@ -119,6 +121,7 @@ public class AlbumPlayGridFragment extends BaseFragment{
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        LOG.d(TAG + ": onCreate");
         if(getArguments() != null){
             album = getArguments().getParcelable(ARGS_ALBUM);
             isShowDesc = getArguments().getBoolean(ARGS_IS_SHOE_DESC);
@@ -135,12 +138,13 @@ public class AlbumPlayGridFragment extends BaseFragment{
     }
 
     private void loadData() {
+        LOG.d(TAG + ": loadData");
         pageNo++;
         SohuApi.getVideo(album, pageSize, pageNo, new GetVideoListener() {
 
             @Override
             public void onGetVideoSuccess(VideoList videoList) {
-                LOG.d(TAG + ".onGetVideoSuccess " + videoList.size());
+                LOG.d(TAG + ": onGetVideoSuccess " + videoList.size());
                 // 添加数据
                 for(Video video : videoList){
                     videoItemAdapter.addVideo(video);

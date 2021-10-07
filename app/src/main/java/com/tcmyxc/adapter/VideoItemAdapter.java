@@ -26,6 +26,7 @@ public class VideoItemAdapter extends BaseAdapter {
     private VideoSelectedListener listener;
     private VideoList videoList = new VideoList();
     private boolean isShowTitleContent;
+    private boolean isFirst = true;
 
     public VideoItemAdapter(Context context, int totalCount, VideoSelectedListener listener) {
         this.context = context;
@@ -74,11 +75,12 @@ public class VideoItemAdapter extends BaseAdapter {
         else {
             holder.videoTitleBtn.setText(String.valueOf(position + 1));
         }
-        // 首次进入页面，也需要显示播放按钮
-        if(position == 0){
-            listener.onVideoSelected(video, position);
+        // 首次进入页面，需要默认选中第一集
+        if(isFirst){
+            listener.onVideoSelected(video, 0);
+            isFirst = false;
         }
-        // 设置播放按钮点击事件
+        // 设置集数按钮点击事件
         holder.videoTitleBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
