@@ -9,8 +9,8 @@ import android.util.Log;
  */
 public class LOG {
 
-    // 开关，调试时设置为true
-    public static final boolean DEBUG = true;
+    // 开关，调试时设置为true，如果正式发布，打日志会比较影响性能
+    public static final boolean DEBUG = false;
     // TAG
     public static final String TAG = "TinyPlayer";
 

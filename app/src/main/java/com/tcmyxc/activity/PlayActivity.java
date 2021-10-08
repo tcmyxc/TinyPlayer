@@ -4,6 +4,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.drawable.Drawable;
+import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
@@ -20,11 +22,15 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.tcmyxc.R;
+import com.tcmyxc.controller.GestureDetectorController;
+import com.tcmyxc.listener.GestureListener;
 import com.tcmyxc.model.sohu.Video;
 import com.tcmyxc.util.DateUtil;
 import com.tcmyxc.util.LOG;
+import com.tcmyxc.util.SysUtil;
 import com.tcmyxc.widget.media.IjkVideoView;
 
+import java.text.NumberFormat;
 import java.util.Formatter;
 import java.util.Locale;
 
@@ -36,7 +42,7 @@ import tv.danmaku.ijk.media.player.IMediaPlayer;
  * @date : 2021/10/6 19:36
  * @description : 视频播放页面
  */
-public class PlayActivity extends BaseActivity {
+public class PlayActivity extends BaseActivity implements GestureListener {
 
     private static final String TAG = PlayActivity.class.getName();
 
@@ -46,7 +52,7 @@ public class PlayActivity extends BaseActivity {
     private static final int AUTO_HIDE_TIME = 10000;
 
     private String url;
-    private int stremType;
+    private int streamType;
     private int currentPosition;
     private Video video;
     private IjkVideoView videoView;
@@ -72,6 +78,18 @@ public class PlayActivity extends BaseActivity {
     private Formatter formatter;
     private StringBuilder formatterStringBuilder;
     private boolean isDragging;
+    private GestureDetectorController gestureController;
+    private TextView dragHorizontalView;
+    private TextView dragVerticalView;
+    private long scrollProgress;
+    private boolean isHorizontalScroll;
+    private boolean isVerticalScroll;
+    private int currentLight;
+    private int maxLight = 255;
+    private int currentVolume;
+    private int maxVolume = 10;
+    private AudioManager audioManager;
+    private String liveTitle;// 直播节目标题
 
 
     @Override
@@ -86,12 +104,16 @@ public class PlayActivity extends BaseActivity {
         // 去信息
         Intent intent = getIntent();
         url = intent.getStringExtra("url");
-        stremType = intent.getIntExtra("type", 0);
+        streamType = intent.getIntExtra("type", 0);
         currentPosition = intent.getIntExtra("currentPosition", 0);
         video = intent.getParcelableExtra("video");
-
         eventHandler = new EventHandler(Looper.myLooper());
+
+        initAudio();
+        initLight();
+        initGestureController();
         initTopAndBottomView();
+        initCenterView();
         initListener();
 
         // 初始化播放器
@@ -125,6 +147,29 @@ public class PlayActivity extends BaseActivity {
         toggleTopAndBottomLayout();
     }
 
+    // 初始化音量
+    private void initAudio() {
+        audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+        setVolumeControlStream(AudioManager.STREAM_MUSIC);
+        audioManager.requestAudioFocus(null, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
+        maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC) * 10;
+        currentVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC) * 10;
+    }
+
+    // 初始化亮度
+    private void initLight() {
+        currentLight = SysUtil.getDefaultBrightness(this);
+    }
+
+    private void initCenterView() {
+        dragHorizontalView = bindViewId(R.id.tv_horizontal_gesture);
+        dragVerticalView = bindViewId(R.id.tv_vertical_gesture);
+    }
+
+    private void initGestureController() {
+        gestureController = new GestureDetectorController(this, this);
+    }
+
     private void initListener() {
         // 返回的点击事件
         backBtn.setOnClickListener(new View.OnClickListener() {
@@ -152,11 +197,10 @@ public class PlayActivity extends BaseActivity {
 
     private void handlePlayOrPause() {
         // 如果视频正在播放，就暂停，反之亦然
-        if(videoView.isPlaying()){
+        if (videoView.isPlaying()) {
             videoView.pause();
             updatePlayPauseStatus(false);
-        }
-        else{
+        } else {
             videoView.start();
             updatePlayPauseStatus(true);
         }
@@ -198,7 +242,7 @@ public class PlayActivity extends BaseActivity {
         // seekbar进度发生变化时回调
         @Override
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-            if(!fromUser){
+            if (!fromUser) {
                 return;
             }
             long duration = videoView.getDuration();// 获取视频的时长
@@ -229,11 +273,11 @@ public class PlayActivity extends BaseActivity {
         }
     };
 
-    private void updateProgress(){
+    private void updateProgress() {
         int curPosition = videoView.getCurrentPosition();// 视频当前的时间
         int duration = videoView.getDuration();// 获取视频的时长
-        if(playerSeekbar != null){
-            if(duration > 0){
+        if (playerSeekbar != null) {
+            if (duration > 0) {
                 long pos = curPosition * 1000l / duration;
                 playerSeekbar.setProgress((int) pos);
             }
@@ -244,16 +288,15 @@ public class PlayActivity extends BaseActivity {
         }
     }
 
-    private String strToTime(int timeMs){
+    private String strToTime(int timeMs) {
         int totalSeconds = timeMs / 1000;
         int seconds = totalSeconds % 60;
         int minutes = (totalSeconds / 60) % 60;
         int hours = (totalSeconds / 3600);
         formatterStringBuilder.setLength(0);
-        if(hours > 0){
+        if (hours > 0) {
             return formatter.format("%d:%02d:%02d", hours, minutes, seconds).toString();
-        }
-        else{
+        } else {
             return formatter.format("%02d:%02d", minutes, seconds).toString();
         }
     }
@@ -279,7 +322,7 @@ public class PlayActivity extends BaseActivity {
         isPanelShowing = true;
         // 更新进度、系统电量
         updateProgress();// 更新进度
-        if(eventHandler != null){
+        if (eventHandler != null) {
             eventHandler.removeMessages(CHECK_TIME);
             Message timeMsg = eventHandler.obtainMessage(CHECK_TIME);
             eventHandler.sendMessage(timeMsg);
@@ -293,7 +336,7 @@ public class PlayActivity extends BaseActivity {
             eventHandler.sendMessage(progressMsg);
         }
         // 显示码流
-        switch (stremType){
+        switch (streamType) {
             case AlbumDetailActivity.StreamType.SUPER:
                 bitstreamView.setText(getResources().getString(R.string.stream_super));
                 break;
@@ -309,7 +352,7 @@ public class PlayActivity extends BaseActivity {
 
     private void hideTopAndBottomLayout() {
         // 拖拽的时候不隐藏
-        if(isDragging){
+        if (isDragging) {
             return;
         }
         topLayout.setVisibility(View.GONE);
@@ -334,7 +377,7 @@ public class PlayActivity extends BaseActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        if(batteryReceiver != null){
+        if (batteryReceiver != null) {
             unregisterReceiver(batteryReceiver);
             batteryReceiver = null;
         }
@@ -351,13 +394,117 @@ public class PlayActivity extends BaseActivity {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if(event.getAction() == MotionEvent.ACTION_UP){
-            if(isMove == false){
+        if (event.getAction() == MotionEvent.ACTION_UP) {
+            if (isMove == false) {
                 toggleTopAndBottomLayout();
+            } else {
+                isMove = false;
+            }
+
+            // 手指头抬起，seek到对应位置播放
+            if (isHorizontalScroll) {
+                isHorizontalScroll = false;
+                videoView.seekTo((int) scrollProgress);
+                dragHorizontalView.setVisibility(View.GONE);
+            }
+            if(isVerticalScroll){
+                isVerticalScroll = false;
+                dragVerticalView.setVisibility(View.GONE);
             }
         }
 
-        return super.onTouchEvent(event);
+        return gestureController.onTouchEvent(event);
+    }
+
+    @Override
+    public void onScrollStart(GestureDetectorController.ScrollType type) {
+        isMove = true;
+        switch (type) {
+            case HORIZONTAL:
+                isHorizontalScroll = true;// 水平滑动标识
+                dragHorizontalView.setVisibility(View.VISIBLE);
+                scrollProgress = -1;
+                break;
+            case VERTICAL_LEFT:
+                isVerticalScroll = true;// 垂直滑动标识
+                setComposeDrawableAndText(dragVerticalView, R.drawable.ic_light, this);
+                dragVerticalView.setVisibility(View.VISIBLE);
+                updateVerticalText(currentLight, maxLight);
+                break;
+            case VERTICAL_RIGHT:
+                isVerticalScroll = true;// 垂直滑动标识
+                // 右边滑动，设置音量icon
+                if (currentVolume > 0) {
+                    setComposeDrawableAndText(dragVerticalView, R.drawable.volume_normal, this);
+                } else {
+                    setComposeDrawableAndText(dragVerticalView, R.drawable.volume_no, this);
+                }
+                dragVerticalView.setVisibility(View.VISIBLE);
+                updateVerticalText(currentVolume, maxVolume);
+                break;
+        }
+    }
+
+    // 更新垂直方向上滑动时的百分比
+    private void updateVerticalText(int current, int total) {
+        NumberFormat formater = NumberFormat.getPercentInstance();
+        formater.setMaximumFractionDigits(0);// 不带小数
+        String percent = formater.format((double) (current) / (double) total);
+        dragVerticalView.setText(percent);
+    }
+
+    // 用于组合图片及文字
+    private void setComposeDrawableAndText(TextView textView, int drawableId, Context context) {
+        Drawable drawable = context.getResources().getDrawable(drawableId);
+        // 这四个参数表示把drawable绘制在矩形区域
+        drawable.setBounds(0, 0, drawable.getMinimumWidth(), drawable.getMinimumHeight());
+        // 设置图片在文字的上方
+        textView.setCompoundDrawables(null, drawable, null, null);
+    }
+
+    // 更新进度
+    @Override
+    public void onScrollHorizontal(float x1, float x2) {
+        int width = getResources().getDisplayMetrics().widthPixels;
+        int MAX_SEEK_STEP = 5 * 60 * 1000;// 最大滑动5分钟
+        int offset = (int) ((x2 / width * MAX_SEEK_STEP) + videoView.getCurrentPosition());
+        long progress = Math.max(0, Math.min(videoView.getDuration(), offset));
+        scrollProgress = progress;
+        updateHorizontalText(progress);
+    }
+
+    // 更新水平方向上seek的进度
+    private void updateHorizontalText(long duration) {
+        String text = strToTime((int) duration) + "/" + strToTime(videoView.getDuration());
+        dragHorizontalView.setText(text);
+    }
+
+    // 屏幕亮度相关
+    @Override
+    public void onScrollVerticalLeft(float y1, float y2) {
+        int height = getResources().getDisplayMetrics().heightPixels;
+        int offset = (int) (maxLight * y1) / height;
+        if (Math.abs(offset) > 0) {
+            currentLight += offset;// 得到变化后的亮度
+            currentLight = Math.max(0, Math.min(maxLight, currentLight));
+            // 更新系统亮度
+            SysUtil.setBrightness(this, currentLight);
+            updateVerticalText(currentLight, maxLight);
+        }
+    }
+
+    // 声音相关
+    @Override
+    public void onScrollVerticalRight(float y1, float y2) {
+        int height = getResources().getDisplayMetrics().heightPixels;
+        int offset = (int) (maxVolume * y1) / height;
+        if (Math.abs(offset) > 0) {
+            currentVolume += offset;// 得到变化后的声音
+            currentVolume = Math.max(0, Math.min(maxVolume, currentVolume));
+            // 更新系统声音
+            audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, currentVolume / 10, 0);
+            updateVerticalText(currentVolume, maxVolume);
+        }
     }
 
     class EventHandler extends Handler {
@@ -420,8 +567,9 @@ public class PlayActivity extends BaseActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        if(videoView != null){
+        if (videoView != null) {
             videoView.stopPlayback();
         }
+        audioManager.abandonAudioFocus(null);// 释放AudioFocus
     }
 }

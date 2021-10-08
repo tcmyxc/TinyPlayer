@@ -1,8 +1,9 @@
 package com.tcmyxc.util;
 
 import android.content.Context;
-import android.preference.PreferenceManager;
+import android.content.SharedPreferences;
 import android.provider.Settings;
+import android.support.v7.preference.PreferenceManager;
 
 /**
  * @author : 徐文祥
@@ -17,8 +18,12 @@ public class SysUtil {
     }
 
     // 设置亮度
-    public static void setBrightness(Context context, int param) {
-        Settings.System.putInt(context.getContentResolver(), "screen_brightness", param);
+    public static void setBrightness(Context context, int brightness) {
+        Settings.System.putInt(context.getContentResolver(), "screen_brightness", brightness);
+        // 再存一份备份
+        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
+        editor.putInt("shared_preferences_light", brightness);
+        editor.commit();
     }
 
     // 获取亮度的sharedPreferences文件
