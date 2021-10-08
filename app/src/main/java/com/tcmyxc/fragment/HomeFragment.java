@@ -49,7 +49,7 @@ public class HomeFragment extends BaseFragment{
                 switch (position){
                     case 6:
                         // 跳转直播
-//                        LiveActivity.launch(getActivity());
+                        LiveActivity.launch(getActivity());
                         break;
                     case 7:
                         // 跳转收藏

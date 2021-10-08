@@ -290,7 +290,7 @@ public class SohuApi{
                     if(!TextUtils.isEmpty(normalUrl)){
                         normalUrl += "uid=" + getUUID() + "&pt=5&prod=app&pg=1";
                         video.setNormalUrl(normalUrl);
-                        LOG.d(": video normalUrl " + normalUrl);
+                        // LOG.d(TAG + ": video normalUrl " + normalUrl);
                         // 发通知
                         if(listener != null){
                             listener.onGetNormalUrl(video, normalUrl);

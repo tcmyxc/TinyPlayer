@@ -145,6 +145,7 @@ public class AlbumDetailActivity extends BaseActivity {
                 intent.putExtra("currentPosition", curPosition);
                 intent.putExtra("video", video);
                 // 去播放页面
+                LOG.i(TAG + ": handleButtonClick，准备去播放页面");
                 startActivity(intent);
             }
         }
