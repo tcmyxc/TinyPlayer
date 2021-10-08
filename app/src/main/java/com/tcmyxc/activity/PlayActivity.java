@@ -26,6 +26,7 @@ import com.tcmyxc.util.LOG;
 import com.tcmyxc.widget.media.IjkVideoView;
 
 import java.util.Formatter;
+import java.util.Locale;
 
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 
@@ -70,6 +71,7 @@ public class PlayActivity extends BaseActivity {
     private boolean isMove = false;// 是否滑动了屏幕
     private Formatter formatter;
     private StringBuilder formatterStringBuilder;
+    private boolean isDragging;
 
 
     @Override
@@ -183,6 +185,77 @@ public class PlayActivity extends BaseActivity {
         playerSeekbar = bindViewId(R.id.sb_player_seekbar);
         totalVideoTime = bindViewId(R.id.tv_total_video_time);
         bitstreamView = bindViewId(R.id.tv_bitstream);// 码流
+
+        playerSeekbar.setMax(1000);
+        playerSeekbar.setOnSeekBarChangeListener(seekBarChangeListener);
+
+        formatterStringBuilder = new StringBuilder();
+        formatter = new Formatter(formatterStringBuilder, Locale.getDefault());
+    }
+
+    // playerSeekbar的listener
+    private SeekBar.OnSeekBarChangeListener seekBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
+        // seekbar进度发生变化时回调
+        @Override
+        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            if(!fromUser){
+                return;
+            }
+            long duration = videoView.getDuration();// 获取视频的时长
+            long curPosition = duration * progress / 1000L;
+            currentVideoTime.setText(strToTime((int) curPosition));
+        }
+
+        // seekbar开始拖动时回调
+        @Override
+        public void onStartTrackingTouch(SeekBar seekBar) {
+            isDragging = true;
+        }
+
+        // seekbar拖动停止时回调
+        @Override
+        public void onStopTrackingTouch(SeekBar seekBar) {
+            isDragging = false;
+            int progress = playerSeekbar.getProgress();// 拖动停止的进度
+            long duration = videoView.getDuration();// 获取视频的时长
+            long curPosition = duration * progress / 1000L;// 视频当前的进度
+            videoView.seekTo((int) curPosition);
+            eventHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    hideTopAndBottomLayout();
+                }
+            }, AUTO_HIDE_TIME);
+        }
+    };
+
+    private void updateProgress(){
+        int curPosition = videoView.getCurrentPosition();// 视频当前的时间
+        int duration = videoView.getDuration();// 获取视频的时长
+        if(playerSeekbar != null){
+            if(duration > 0){
+                long pos = curPosition * 1000l / duration;
+                playerSeekbar.setProgress((int) pos);
+            }
+            int percent = videoView.getBufferPercentage();// 缓冲的进度
+            playerSeekbar.setSecondaryProgress(percent);// 设置缓冲进度
+            currentVideoTime.setText(strToTime(curPosition));
+            totalVideoTime.setText(strToTime(duration));
+        }
+    }
+
+    private String strToTime(int timeMs){
+        int totalSeconds = timeMs / 1000;
+        int seconds = totalSeconds % 60;
+        int minutes = (totalSeconds / 60) % 60;
+        int hours = (totalSeconds / 3600);
+        formatterStringBuilder.setLength(0);
+        if(hours > 0){
+            return formatter.format("%d:%02d:%02d", hours, minutes, seconds).toString();
+        }
+        else{
+            return formatter.format("%02d:%02d", minutes, seconds).toString();
+        }
     }
 
     private void toggleTopAndBottomLayout() {
@@ -205,6 +278,7 @@ public class PlayActivity extends BaseActivity {
         bottomLayout.setVisibility(View.VISIBLE);
         isPanelShowing = true;
         // 更新进度、系统电量
+        updateProgress();// 更新进度
         if(eventHandler != null){
             eventHandler.removeMessages(CHECK_TIME);
             Message timeMsg = eventHandler.obtainMessage(CHECK_TIME);
@@ -213,6 +287,10 @@ public class PlayActivity extends BaseActivity {
             eventHandler.removeMessages(CHECK_BATTERY);
             Message batteryMsg = eventHandler.obtainMessage(CHECK_BATTERY);
             eventHandler.sendMessage(batteryMsg);
+
+            eventHandler.removeMessages(CHECK_PROGRESS);
+            Message progressMsg = eventHandler.obtainMessage(CHECK_PROGRESS);
+            eventHandler.sendMessage(progressMsg);
         }
         // 显示码流
         switch (stremType){
@@ -230,6 +308,10 @@ public class PlayActivity extends BaseActivity {
     }
 
     private void hideTopAndBottomLayout() {
+        // 拖拽的时候不隐藏
+        if(isDragging){
+            return;
+        }
         topLayout.setVisibility(View.GONE);
         bottomLayout.setVisibility(View.GONE);
         isPanelShowing = false;
@@ -305,6 +387,14 @@ public class PlayActivity extends BaseActivity {
                     });
                     break;
                 case CHECK_PROGRESS:
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            long duration = videoView.getDuration();
+                            long curDuration = playerSeekbar.getProgress() * duration / 1000l;
+                            currentVideoTime.setText(strToTime((int) curDuration));
+                        }
+                    });
                     break;
             }
         }

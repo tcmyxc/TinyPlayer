@@ -19,6 +19,7 @@ import com.tcmyxc.model.sohu.ResultAlbum;
 import com.tcmyxc.model.sohu.Video;
 import com.tcmyxc.model.sohu.VideoData;
 import com.tcmyxc.model.sohu.VideoResult;
+import com.tcmyxc.util.LOG;
 import com.tcmyxc.util.OkHttpUtil;
 
 import org.json.JSONException;
@@ -289,6 +290,7 @@ public class SohuApi{
                     if(!TextUtils.isEmpty(normalUrl)){
                         normalUrl += "uid=" + getUUID() + "&pt=5&prod=app&pg=1";
                         video.setNormalUrl(normalUrl);
+                        LOG.d(": video normalUrl " + normalUrl);
                         // 发通知
                         if(listener != null){
                             listener.onGetNormalUrl(video, normalUrl);
