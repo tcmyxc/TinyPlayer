@@ -104,13 +104,15 @@ public class FavoriteAdapter extends BaseAdapter {
             // 如果有竖图
             if (album.getVerImgUrl() != null) {
                 ImageUtil.disPlayImage(holder.albumPost, album.getVerImgUrl(), point.x, point.y);
+            }else if(album.getHorImgUrl() != null){// 横图
+                ImageUtil.disPlayImage(holder.albumPost, album.getHorImgUrl(), point.x, point.y);
             }
 
             holder.checkBtn.setChecked(item.isChecked());
 
             LOG.d(TAG + " ：收藏页面，showChecked is " + showChecked);
-            // 如果没被选中
-            if (!showChecked) {
+            // 如果选中的小图标还未出现
+            if (showChecked == false) {
                 // 点击跳转详情页面
                 holder.container.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -132,22 +134,37 @@ public class FavoriteAdapter extends BaseAdapter {
                         return true;
                     }
                 });
-            } else {
-                // fix：选中一个后，选中其他收藏项目失效的问题
+            }
+            // fix：选中一个后，选中其他收藏项目失效的问题
+            else{
                 holder.container.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        LOG.d(TAG + " ：收藏页面，选中了 " + position);
-                        // 先获取当前选中的状态
-                        boolean checked = item.isChecked();
-                        item.setChecked(checked);
-                        holder.checkBtn.setChecked(!checked);
-                        item.setChecked(!checked);
+                        LOG.d(TAG + " ：收藏页面，按图片选中 " + position);
+                        refreshItemStatus(item, holder);
                     }
                 });
             }
+
+            // 考虑用户通过右上角的图标选中的情形
+            holder.checkBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    LOG.d(TAG + " ：收藏页面，点右上角选中 " + position);
+                    refreshItemStatus(item, holder);
+                }
+            });
         }
+
         return convertView;
+    }
+
+    private void refreshItemStatus(FavoriteAlbum item, ViewHolder holder) {
+        // 先获取以前选中的状态
+        boolean checked = item.isChecked();
+        // 点击之后需要把状态取反
+        item.setChecked(!checked);
+        holder.checkBtn.setChecked(!checked);
     }
 
     public void isCheckedAllItem(boolean isChecked) {
@@ -191,7 +208,6 @@ public class FavoriteAdapter extends BaseAdapter {
         public void setAlbum(Album album) {
             this.album = album;
         }
-
 
         public boolean isChecked() {
             return checked;

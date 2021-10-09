@@ -60,6 +60,24 @@ public class FavoriteActivity extends BaseActivity {
         swipeRefreshLayout = bindViewId(R.id.swipeRefreshLayout);
     }
 
+    @Override
+    protected void initData() {
+        favoriteDBHelper = new FavoriteDBHelper(this);
+        itemList = favoriteDBHelper.getAllData();
+        isShowEmptyView();// 判断收藏是否为空
+
+        favoriteGridView.setOnScrollListener(scrollListener);
+        favoriteAdapter = new FavoriteAdapter(this, itemList);
+        favoriteGridView.setAdapter(favoriteAdapter);
+
+        // 设置刷新时控件颜色渐变
+        swipeRefreshLayout.setColorSchemeResources(android.R.color.holo_green_dark,
+                android.R.color.holo_blue_dark,
+                android.R.color.holo_orange_dark);
+        swipeRefreshLayout.setOnRefreshListener(refreshListener);
+        favoriteAdapter.setShowChecked(false);// 不显示选中的图标
+    }
+
     private GridView.OnScrollListener scrollListener = new GridView.OnScrollListener() {
         @Override
         public void onScrollStateChanged(AbsListView view, int scrollState) {
@@ -90,12 +108,13 @@ public class FavoriteActivity extends BaseActivity {
 
     private void refresh(){
         itemList = favoriteDBHelper.getAllData();
-        isShowEmptyView();
+        isShowEmptyView();// 判断收藏是否为空
         favoriteAdapter = new FavoriteAdapter(FavoriteActivity.this, itemList);
         favoriteGridView.setAdapter(favoriteAdapter);
         swipeRefreshLayout.setRefreshing(false);
     }
 
+    // 收藏为空显示提示语
     private void isShowEmptyView(){
         if(itemList.size() == 0){
             emptyView.setVisibility(View.VISIBLE);
@@ -106,24 +125,7 @@ public class FavoriteActivity extends BaseActivity {
         }
     }
 
-    @Override
-    protected void initData() {
-        favoriteDBHelper = new FavoriteDBHelper(this);
-        itemList = favoriteDBHelper.getAllData();
-        isShowEmptyView();
-
-        favoriteGridView.setOnScrollListener(scrollListener);
-        favoriteAdapter = new FavoriteAdapter(this, itemList);
-        favoriteGridView.setAdapter(favoriteAdapter);
-
-        // 设置刷新时控件颜色渐变
-        swipeRefreshLayout.setColorSchemeResources(android.R.color.holo_green_dark,
-                android.R.color.holo_blue_dark,
-                android.R.color.holo_orange_dark);
-        swipeRefreshLayout.setOnRefreshListener(refreshListener);
-        favoriteAdapter.setShowChecked(false);
-    }
-
+    // 添加删除按钮
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_delete, menu);
@@ -137,12 +139,11 @@ public class FavoriteActivity extends BaseActivity {
                 finish();
                 return true;
             case R.id.action_delete:// 删除
+                // 如果选中图标存在了，说明用户想删除了
                 if(favoriteAdapter.isSelected()){
                     showDeleteDialog();
                 }
-//                else {
-//                    Toast.makeText(this, "未选中任何收藏项", Toast.LENGTH_LONG).show();
-//                }
+
                 return true;
         }
 
