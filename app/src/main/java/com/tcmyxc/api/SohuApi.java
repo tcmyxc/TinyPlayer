@@ -71,7 +71,7 @@ public class SohuApi{
 
     public static void onGetChannelAlbums(Channel channel, int pageNo, int pageSize, GetChannelAlbumListener listener) {
         String url = getChannelAlbumUrl(channel, pageNo, pageSize);
-        // LOG.i(url);
+        LOG.i(url);
         getChannelAlbumByUrl(url, listener);
     }
 

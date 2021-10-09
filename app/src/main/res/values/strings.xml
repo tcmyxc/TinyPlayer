@@ -10,8 +10,8 @@
 
     <string name="app_description">
         - 视频源来源于搜狐视频网站，最新院线大片，热播剧随时看\n
-        - 基于ijkplayer，支持RMVB，MKV，WMA，MP4...等主流音视频格式\n
-        - 支持收藏影视剧、播放历史\n
+        - 基于ijkplayer，支持RMVB，MKV，WMA，MP4等主流音视频格式\n
+        - 支持收藏影视剧\n
         - 直播高清央视及卫视节目\n
     </string>
 
@@ -29,7 +29,6 @@
     <string name="channel_variety">综艺</string>
     <string name="channel_live">直播</string>
     <string name="channel_favorite">收藏</string>
-    <string name="channel_history">历史</string>
 
     <string name="site_letv">乐视视频</string>
     <string name="site_sohu">搜狐视频</string>
@@ -53,8 +52,6 @@
     <string name="favorite_dialog_message">确定删除?</string>
     <string name="favorite_dialog_sure">确定</string>
     <string name="favorite_dialog_quit">取消</string>
-    <string name="history_title">播放历史</string>
-    <string name="history_empty">暂无播放历史!</string>
 
     <string name="VideoView_error_text_invalid_progressive_playback">Invalid progressive playback</string>
     <string name="VideoView_error_text_unknown">Unknown</string>

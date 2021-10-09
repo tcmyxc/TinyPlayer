@@ -1,5 +1,6 @@
 package com.tcmyxc.activity;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -91,6 +92,14 @@ public class PlayActivity extends BaseActivity implements GestureListener {
     private AudioManager audioManager;
     private String liveTitle;// 直播节目标题
 
+    public static void launch(Activity activity, String url, String title) {
+        Intent intent = new Intent(activity, PlayActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        intent.putExtra("url", url);
+        intent.putExtra("title", title);
+        activity.startActivity(intent);
+    }
+
 
     @Override
     protected int getLayoutId() {
@@ -104,6 +113,7 @@ public class PlayActivity extends BaseActivity implements GestureListener {
         // 去信息
         Intent intent = getIntent();
         url = intent.getStringExtra("url");
+        liveTitle = intent.getStringExtra("title");
         streamType = intent.getIntExtra("type", 0);
         currentPosition = intent.getIntExtra("currentPosition", 0);
         video = intent.getParcelableExtra("video");
@@ -364,6 +374,10 @@ public class PlayActivity extends BaseActivity implements GestureListener {
     protected void initData() {
         if (video != null) {
             videoNameView.setText(video.getVideoName());
+        }
+        // 如果是直播
+        if(liveTitle != null){
+            videoNameView.setText(liveTitle);
         }
 
     }

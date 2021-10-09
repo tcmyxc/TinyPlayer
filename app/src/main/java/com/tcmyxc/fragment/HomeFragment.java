@@ -1,7 +1,6 @@
 package com.tcmyxc.fragment;
 
 import android.view.View;
-import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.GridView;
 
@@ -10,7 +9,6 @@ import com.hejunlin.superindicatorlibray.LoopViewPager;
 import com.tcmyxc.R;
 import com.tcmyxc.activity.DetailListActivity;
 import com.tcmyxc.activity.FavoriteActivity;
-import com.tcmyxc.activity.HistoryActivity;
 import com.tcmyxc.activity.LiveActivity;
 import com.tcmyxc.adapter.ChannelAdapter;
 import com.tcmyxc.adapter.HomePictureAdapter;
@@ -45,7 +43,7 @@ public class HomeFragment extends BaseFragment{
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                // LOG.i(this.getClass().getName() + ".onItemClick: " + "position is " + position);
+                LOG.i(this.getClass().getName() + ": onItemClick, position is " + position);
                 switch (position){
                     case 6:
                         // 跳转直播
@@ -53,11 +51,7 @@ public class HomeFragment extends BaseFragment{
                         break;
                     case 7:
                         // 跳转收藏
-//                        FavoriteActivity.launch(getActivity());
-                        break;
-                    case 8:
-                        // 跳转历史记录
-//                        HistoryActivity.launch(getActivity());
+                        FavoriteActivity.launch(getActivity());
                         break;
                     default:
                         // 跳转对应频道

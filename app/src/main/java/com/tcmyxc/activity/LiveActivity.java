@@ -9,6 +9,7 @@ import android.view.MenuItem;
 
 import com.tcmyxc.R;
 import com.tcmyxc.adapter.LiveItemAdapter;
+import com.tcmyxc.util.LOG;
 import com.tcmyxc.widget.CustomDecoration;
 
 /**
@@ -18,10 +19,13 @@ import com.tcmyxc.widget.CustomDecoration;
  */
 public class LiveActivity extends BaseActivity{
 
+    private static final String TAG = LiveActivity.class.getName();
+
     private RecyclerView recyclerView;
 
 
     public static void launch(Activity activity) {
+        LOG.d(TAG + ": launch");
         Intent intent = new Intent(activity, LiveActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         activity.startActivity(intent);

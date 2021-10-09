@@ -5,7 +5,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <uses-permission android:name="android.permission.WRITE_SETTINGS"/>
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
 
     <application
         android:name=".AppManager"
@@ -16,8 +16,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TinyPlayer"
         android:usesCleartextTraffic="true">
-        <activity android:name=".activity.PlayActivity"
-            android:screenOrientation="landscape"/>
+        <activity android:name=".activity.FavoriteActivity"></activity>
+        <activity
+            android:name=".activity.PlayActivity"
+            android:screenOrientation="landscape" />
+        <activity android:name=".activity.LiveActivity" />
         <activity android:name=".GuideActivity" />
         <activity android:name=".activity.HomeActivity" />
         <activity android:name=".SplashActivity">
@@ -26,12 +29,9 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        <!-- DetailListActivity -->
-        <activity android:name=".activity.DetailListActivity" />
-        <!-- AlbumDetailActivity -->
+        </activity> <!-- DetailListActivity -->
+        <activity android:name=".activity.DetailListActivity" /> <!-- AlbumDetailActivity -->
         <activity android:name=".activity.AlbumDetailActivity" />
-
     </application>
 
 </manifest>

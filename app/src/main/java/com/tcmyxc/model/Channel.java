@@ -21,9 +21,8 @@ public class Channel implements Serializable {
     public static final int VARIETY = 6;// 综艺
     public static final int LIVE = 7;// 直播
     public static final int FAVORITE = 8;// 收藏
-    public static final int HISTORY = 9;// 历史记录
 
-    public static final int MAX_COUNT = 9;// 频道数
+    public static final int MAX_COUNT = 8;// 频道数
 
     private int channelId;
     private String channelName;
@@ -57,9 +56,6 @@ public class Channel implements Serializable {
                 break;
             case FAVORITE:
                 channelName = context.getResources().getString(R.string.channel_favorite);
-                break;
-            case HISTORY:
-                channelName = context.getResources().getString(R.string.channel_history);
                 break;
             default:
                 break;

@@ -25,6 +25,8 @@ import com.tcmyxc.model.sohu.Video;
 import com.tcmyxc.util.ImageUtil;
 import com.tcmyxc.util.LOG;
 
+import db.FavoriteDBHelper;
+
 /**
  * @author : 徐文祥
  * @date : 2021/10/5 19:21
@@ -50,6 +52,7 @@ public class AlbumDetailActivity extends BaseActivity {
     private Button normalBitstreamButton;
     private Button highBitstreamButton;
     private int currentVideoPosition;
+    private FavoriteDBHelper favoriteDBHelper;
 
     private AlbumPlayGridFragment fragment;// 中间显示集数或者详情的控件
 
@@ -87,6 +90,9 @@ public class AlbumDetailActivity extends BaseActivity {
         setSupportActionBar();
         setSupportArrowActionBar(true);
         setTitle(album.getTitle());// 显示标题
+
+        favoriteDBHelper = new FavoriteDBHelper(this);
+        isFavorite = favoriteDBHelper.getAlbumById(album.getAlbumId()) != null ? true : false;
 
         // 设置页面上小组件的内容
         albumImage = bindViewId(R.id.iv_album_image);
@@ -229,14 +235,17 @@ public class AlbumDetailActivity extends BaseActivity {
             // 本来是收藏但是点了
             case R.id.action_favorite_item:
                 if (isFavorite) {
+                    // 取消收藏，并写入数据库
                     isFavorite = false;
+                    favoriteDBHelper.del(album.getAlbumId());
                     invalidateOptionsMenu();
                     Toast.makeText(this, "已取消收藏", Toast.LENGTH_LONG).show();
                 }
                 return true;
-            case R.id.action_unfavorite_item:// 原来没有收藏
+            case R.id.action_unfavorite_item:// 原来没有收藏但是点了收藏
                 if (!isFavorite) {
                     isFavorite = true;
+                    favoriteDBHelper.add(album);// 写数据库
                     invalidateOptionsMenu();
                     Toast.makeText(this, "收藏成功", Toast.LENGTH_LONG).show();
                 }

@@ -208,7 +208,7 @@ public class Album implements Parcelable {
         return AppManager.getGson().toJson(this);
     }
 
-    public Album fromJson(String json){
+    public static Album fromJson(String json){
         return AppManager.getGson().fromJson(json, Album.class);
     }
 }

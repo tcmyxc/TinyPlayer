@@ -86,9 +86,6 @@ public class ChannelAdapter extends BaseAdapter {
             case Channel.FAVORITE:
                 imgResId = R.drawable.ic_bookmark;
                 break;
-            case Channel.HISTORY:
-                imgResId = R.drawable.ic_history;
-                break;
             default:
                 break;
         }
