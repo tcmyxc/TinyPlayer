@@ -6,6 +6,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/ic_start_bg"
-    tools:context=".SplashActivity">
+    tools:context=".activity.SplashActivity">
 
 </android.support.constraint.ConstraintLayout>

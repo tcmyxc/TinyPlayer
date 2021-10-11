@@ -1,4 +1,4 @@
-package com.tcmyxc;
+package com.tcmyxc.activity;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -9,6 +9,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
 
+import com.tcmyxc.R;
+import com.tcmyxc.activity.GuideActivity;
 import com.tcmyxc.activity.HomeActivity;
 
 public class SplashActivity extends Activity {

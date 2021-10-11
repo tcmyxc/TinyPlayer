@@ -71,7 +71,6 @@ public class SohuApi{
 
     public static void onGetChannelAlbums(Channel channel, int pageNo, int pageSize, GetChannelAlbumListener listener) {
         String url = getChannelAlbumUrl(channel, pageNo, pageSize);
-        LOG.i(url);
         getChannelAlbumByUrl(url, listener);
     }
 
@@ -323,5 +322,51 @@ public class SohuApi{
     private static String getUUID(){
         UUID uuid = UUID.randomUUID();
         return uuid.toString().replace("-", "");
+    }
+
+    public static AlbumList getSomeData(){
+        AlbumList albumList = new AlbumList();// 供首页使用
+        albumList.add(onGetChannelAlbums(SOHU_CHANNELID_MOVIE));
+        albumList.add(onGetChannelAlbums(SOHU_CHANNELID_SERIES));
+        albumList.add(onGetChannelAlbums(SOHU_CHANNELID_VARIETY));
+        albumList.add(onGetChannelAlbums(SOHU_CHANNELID_DOCUMENTARY));
+        albumList.add(onGetChannelAlbums(SOHU_CHANNELID_COMIC));
+        albumList.add(onGetChannelAlbums(SOHU_CHANNELID_MUSIC));
+        return albumList;
+    }
+
+    private static Album onGetChannelAlbums(int channelId) {
+        String url = String.format(API_CHANNEL_ALBUM_FORMAT, channelId, 0, 1);
+        LOG.i(TAG + " :single url is " + url);
+        return getSingleAlbumByUrl(url);
+    }
+
+    private static Album getSingleAlbumByUrl(String url) {
+        final Album[] res = {null};
+        OkHttpUtil.excute(url, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (!response.isSuccessful()) {
+                    return;
+                }
+
+                // 取到数据映射Result
+                Result result = AppManager.getGson().fromJson(response.body().string(), Result.class);
+                // 转换ResultAlbum变成Album
+                AlbumList albumList = toConvertAlbumList(result);
+                // Album存到AlbumLis中
+                if (albumList != null) {
+                    if (albumList.size() > 0) {
+                        LOG.d(TAG + ": single result is " + albumList.get(0).toString());
+                        res[1] = albumList.get(0);
+                    }
+                }
+            }
+        });
+        return res[1];
     }
 }

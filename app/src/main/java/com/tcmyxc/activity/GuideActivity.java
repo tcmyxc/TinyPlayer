@@ -1,4 +1,4 @@
-package com.tcmyxc;
+package com.tcmyxc.activity;
 
 import android.app.Activity;
 import android.content.Context;
@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import com.tcmyxc.activity.HomeActivity;
+import com.tcmyxc.R;
 
 import java.util.ArrayList;
 import java.util.List;
