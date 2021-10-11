@@ -44,8 +44,15 @@ public class HomePictureAdapter extends PagerAdapter {
             textView.setText(album.getTitle());
             ImageUtil.disPlayImage(imageView, album.getHorImgUrl());
 
-            container.addView(view);// 添加到容器中
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    AlbumDetailActivity.launch((Activity) context, album);
+                }
+            });
         }
+
+        container.addView(view);// 添加到容器中
 
         return view;
     }
