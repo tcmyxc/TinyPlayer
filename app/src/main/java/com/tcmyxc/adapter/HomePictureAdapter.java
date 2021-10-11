@@ -2,7 +2,6 @@ package com.tcmyxc.adapter;
 
 import android.app.Activity;
 import android.content.Context;
-import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.v4.view.PagerAdapter;
 import android.view.LayoutInflater;
@@ -12,14 +11,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.tcmyxc.R;
-import com.tcmyxc.api.SohuApi;
+import com.tcmyxc.activity.AlbumDetailActivity;
 import com.tcmyxc.model.Album;
 import com.tcmyxc.model.AlbumList;
 import com.tcmyxc.util.ImageUtil;
-import com.tcmyxc.util.LOG;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author : 徐文祥
@@ -31,32 +26,11 @@ public class HomePictureAdapter extends PagerAdapter {
     private Context context;
     private AlbumList albumList;
 
-    private int[] img = new int[]{
-            R.drawable.a,
-            R.drawable.b,
-            R.drawable.c,
-            R.drawable.d,
-            R.drawable.e,
-    };
-
-    private int[] desc = new int[]{
-            R.string.a_name,
-            R.string.b_name,
-            R.string.c_name,
-            R.string.d_name,
-            R.string.e_name
-    };
-
-    public HomePictureAdapter(Activity activity){
+    public HomePictureAdapter(Activity activity, AlbumList albumList){
         context = activity;
-        getData();
+        this.albumList = albumList;
     }
 
-    private void getData() {
-        // 获取一些数据展示在首页上
-        albumList = SohuApi.getSomeData();
-        SystemClock.sleep(1000);
-    }
 
     @NonNull
     @Override
@@ -65,24 +39,13 @@ public class HomePictureAdapter extends PagerAdapter {
         TextView textView = view.findViewById(R.id.tv_desc);
         ImageView imageView = view.findViewById(R.id.iv_img);
 
-        getData();
-        LOG.d("position is " + position);
-
         if(albumList != null && albumList.size() > 0){
             Album album = albumList.get(position);
             textView.setText(album.getTitle());
-            if (album.getVerImgUrl() != null) {
-                ImageUtil.disPlayImage(imageView, album.getVerImgUrl());
-            }else if(album.getHorImgUrl() != null){// 横图
-                ImageUtil.disPlayImage(imageView, album.getHorImgUrl());
-            }
-        }
-        else{
-            textView.setText(desc[position]);
-            imageView.setImageResource(img[position]);
-        }
+            ImageUtil.disPlayImage(imageView, album.getHorImgUrl());
 
-        container.addView(view);// 添加到容器中
+            container.addView(view);// 添加到容器中
+        }
 
         return view;
     }
@@ -92,9 +55,10 @@ public class HomePictureAdapter extends PagerAdapter {
         container.removeView((View) object);
     }
 
+    // 固定5个，可以避免抛出异常
     @Override
     public int getCount() {
-        return albumList == null ? 5 : albumList.size();
+        return 5;
     }
 
     @Override

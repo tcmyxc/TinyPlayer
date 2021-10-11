@@ -58,6 +58,7 @@ public class HomeActivity extends BaseActivity {
         fragmentManager.beginTransaction().add(R.id.fl_main_content, currentFragment).commit();
     }
 
+    // 处理侧拉栏业务
     private void handleNavigationViewItem() {
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override

@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import com.tcmyxc.AppManager;
 import com.tcmyxc.listener.GetAlbumDetailListener;
 import com.tcmyxc.listener.GetChannelAlbumListener;
+import com.tcmyxc.listener.GetLoopViewPageDataListener;
 import com.tcmyxc.listener.GetVideoListener;
 import com.tcmyxc.listener.GetVideoPlayUrlListener;
 import com.tcmyxc.model.Album;
@@ -37,7 +38,7 @@ import okhttp3.Response;
  * @date : 2021/10/3 17:45
  * @description : 搜狐视频api
  */
-public class SohuApi{
+public class SohuApi {
 
     private static final String TAG = SohuApi.class.getName();
 
@@ -174,7 +175,7 @@ public class SohuApi{
         return channelId;
     }
 
-    public static void getAlbumDetail(Album album, final GetAlbumDetailListener listener){
+    public static void getAlbumDetail(Album album, final GetAlbumDetailListener listener) {
         final String url = API_ALBUM_INFO + album.getAlbumId() + API_KEY;
         OkHttpUtil.excute(url, new Callback() {
             @Override
@@ -196,18 +197,17 @@ public class SohuApi{
                 // 处理数据（详情页面）
                 DetailResult result = AppManager.getGson().fromJson(response.body().string(), DetailResult.class);
                 ResultAlbum albumDetail = result.getData();
-                if(albumDetail != null){
-                    if(albumDetail.getTotalVideoCount() > 0){
+                if (albumDetail != null) {
+                    if (albumDetail.getTotalVideoCount() > 0) {
                         album.setVideoTotal(albumDetail.getTotalVideoCount());
-                    }
-                    else{
+                    } else {
                         album.setVideoTotal(albumDetail.getLastVideoCount());
                     }
                 }
 
                 // 通知listener
                 // 这里是通过回调函数进行数据的补全
-                if(listener != null){
+                if (listener != null) {
                     listener.onGetAlbumDetailSuccess(album);
                 }
 
@@ -239,8 +239,8 @@ public class SohuApi{
                 VideoResult videoResult = AppManager.getGson().fromJson(response.body().string(), VideoResult.class);
                 VideoData data = videoResult.getData();
                 VideoList videoList = new VideoList();
-                if(data != null){
-                    for(Video video : data.getVideoList()) {
+                if (data != null) {
+                    for (Video video : data.getVideoList()) {
                         Video v = new Video();
                         v.setHorHighPic(video.getHorHighPic());
                         v.setVerHighPic(video.getVerHighPic());
@@ -250,7 +250,7 @@ public class SohuApi{
                         videoList.add(v);
                     }
 
-                    if(listener != null){
+                    if (listener != null) {
                         listener.onGetVideoSuccess(videoList);
                     }
                 }
@@ -286,28 +286,28 @@ public class SohuApi{
                     String normalUrl = data.optString("url_nor");
                     String highUrl = data.optString("url_high");
                     String superUrl = data.optString("url_super");
-                    if(!TextUtils.isEmpty(normalUrl)){
+                    if (!TextUtils.isEmpty(normalUrl)) {
                         normalUrl += "uid=" + getUUID() + "&pt=5&prod=app&pg=1";
                         video.setNormalUrl(normalUrl);
                         // LOG.d(TAG + ": video normalUrl " + normalUrl);
                         // 发通知
-                        if(listener != null){
+                        if (listener != null) {
                             listener.onGetNormalUrl(video, normalUrl);
                         }
                     }
-                    if(!TextUtils.isEmpty(highUrl)){
+                    if (!TextUtils.isEmpty(highUrl)) {
                         highUrl += "uid=" + getUUID() + "&pt=5&prod=app&pg=1";
                         video.setHighUrl(highUrl);
                         // 发通知
-                        if(listener != null){
+                        if (listener != null) {
                             listener.onGetHighUrl(video, highUrl);
                         }
                     }
-                    if(!TextUtils.isEmpty(superUrl)){
+                    if (!TextUtils.isEmpty(superUrl)) {
                         superUrl += "uid=" + getUUID() + "&pt=5&prod=app&pg=1";
                         video.setSuperUrl(superUrl);
                         // 发通知
-                        if(listener != null){
+                        if (listener != null) {
                             listener.onGetSuperUrl(video, superUrl);
                         }
                     }
@@ -319,38 +319,94 @@ public class SohuApi{
 
     }
 
-    private static String getUUID(){
+    private static String getUUID() {
         UUID uuid = UUID.randomUUID();
         return uuid.toString().replace("-", "");
     }
 
-    public static AlbumList getSomeData(){
+    // 获取首页轮播图数据
+    public static AlbumList getSomeData() {
         AlbumList albumList = new AlbumList();// 供首页使用
-        albumList.add(onGetChannelAlbums(SOHU_CHANNELID_MOVIE));
-        albumList.add(onGetChannelAlbums(SOHU_CHANNELID_SERIES));
-        albumList.add(onGetChannelAlbums(SOHU_CHANNELID_VARIETY));
-        albumList.add(onGetChannelAlbums(SOHU_CHANNELID_DOCUMENTARY));
-        albumList.add(onGetChannelAlbums(SOHU_CHANNELID_COMIC));
-        albumList.add(onGetChannelAlbums(SOHU_CHANNELID_MUSIC));
+        // 使用回调添加数据，比较臃肿，但是目前只想到这种办法
+        onGetChannelAlbums(SOHU_CHANNELID_MOVIE, new GetLoopViewPageDataListener() {
+            @Override
+            public void onGetLoopViewPageDataSuccess(Album album) {
+                albumList.add(album);
+            }
+
+            @Override
+            public void onGetLoopViewPageDataFailed(ErrorInfo errorInfo) {
+
+            }
+        });
+        onGetChannelAlbums(SOHU_CHANNELID_SERIES, new GetLoopViewPageDataListener() {
+            @Override
+            public void onGetLoopViewPageDataSuccess(Album album) {
+                albumList.add(album);
+            }
+
+            @Override
+            public void onGetLoopViewPageDataFailed(ErrorInfo errorInfo) {
+
+            }
+        });
+        onGetChannelAlbums(SOHU_CHANNELID_VARIETY, new GetLoopViewPageDataListener() {
+            @Override
+            public void onGetLoopViewPageDataSuccess(Album album) {
+                albumList.add(album);
+            }
+
+            @Override
+            public void onGetLoopViewPageDataFailed(ErrorInfo errorInfo) {
+
+            }
+        });
+        onGetChannelAlbums(SOHU_CHANNELID_DOCUMENTARY, new GetLoopViewPageDataListener() {
+            @Override
+            public void onGetLoopViewPageDataSuccess(Album album) {
+                albumList.add(album);
+            }
+
+            @Override
+            public void onGetLoopViewPageDataFailed(ErrorInfo errorInfo) {
+
+            }
+        });
+        onGetChannelAlbums(SOHU_CHANNELID_COMIC, new GetLoopViewPageDataListener() {
+            @Override
+            public void onGetLoopViewPageDataSuccess(Album album) {
+                albumList.add(album);
+            }
+
+            @Override
+            public void onGetLoopViewPageDataFailed(ErrorInfo errorInfo) {
+
+            }
+        });
         return albumList;
     }
 
-    private static Album onGetChannelAlbums(int channelId) {
+    private static void onGetChannelAlbums(int channelId, GetLoopViewPageDataListener listener) {
         String url = String.format(API_CHANNEL_ALBUM_FORMAT, channelId, 0, 1);
-        LOG.i(TAG + " :single url is " + url);
-        return getSingleAlbumByUrl(url);
+        LOG.i(TAG + " :onGetChannelAlbums, single url is " + url);
+        getSingleAlbumByUrl(url, listener);
     }
 
-    private static Album getSingleAlbumByUrl(String url) {
-        final Album[] res = {null};
+    private static void getSingleAlbumByUrl(String url, GetLoopViewPageDataListener listener) {
         OkHttpUtil.excute(url, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
+                if (listener != null) {
+                    ErrorInfo info = buildErrorInfo(url, "getSingleAlbumByUrl", e, ErrorInfo.ERROR_TYPE_URL);
+                    listener.onGetLoopViewPageDataFailed(info);
+                }
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (!response.isSuccessful()) {
+                    ErrorInfo info = buildErrorInfo(url, "getSingleAlbumByUrl", null, ErrorInfo.ERROR_TYPE_HTTP);
+                    listener.onGetLoopViewPageDataFailed(info);
                     return;
                 }
 
@@ -361,12 +417,13 @@ public class SohuApi{
                 // Album存到AlbumLis中
                 if (albumList != null) {
                     if (albumList.size() > 0) {
-                        LOG.d(TAG + ": single result is " + albumList.get(0).toString());
-                        res[1] = albumList.get(0);
+                        LOG.d(TAG + ": getSingleAlbumByUrl, single result is " + albumList.get(0).toString());
+                        if (listener != null) {
+                            listener.onGetLoopViewPageDataSuccess(albumList.get(0));
+                        }
                     }
                 }
             }
         });
-        return res[1];
     }
 }

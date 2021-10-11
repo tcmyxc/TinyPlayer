@@ -15,12 +15,6 @@
         - 直播高清央视及卫视节目\n
     </string>
 
-    <string name="a_name">三生三世十里桃花</string>
-    <string name="b_name">那片星空那片海</string>
-    <string name="c_name">大秦帝国之崛起</string>
-    <string name="d_name">射雕英雄传</string>
-    <string name="e_name">中国式相亲之奶茶大叔遭疯抢</string>
-
     <string name="channel_series">电视剧</string>
     <string name="channel_movie">电影</string>
     <string name="channel_comic">动漫</string>
