@@ -29,7 +29,7 @@
             android:textColor="@color/white"
             android:gravity="center"
             android:layout_margin="@dimen/dimen_10dp"
-            android:textSize="@dimen/dimen_30sp"/>
+            android:textSize="@dimen/dimen_38sp"/>
 
     </LinearLayout>
 
@@ -37,8 +37,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        android:text="安卓©2021年大作业"
-        android:textSize="@dimen/dimen_40sp"
+        android:text="@string/app_main_desc"
+        android:textSize="@dimen/dimen_38sp"
         android:textColor="@color/colorPrimary"
         />
 

@@ -1,18 +1,20 @@
 <resources>
     <string name="app_name">TinyPlayer</string>
-    <string name="favor_selected"></string>
-    <string name="favor_normal"></string>
+    <string name="favor_selected" />
+    <string name="favor_normal" />
     <string name="drawer_open">Open</string>
     <string name="drawer_close">Close</string>
     <string name="home_title">首页</string>
     <string name="blog_title">我的个人博客</string>
     <string name="about_title">关于软件</string>
 
+    <string name="app_main_desc">Android应用开发技术©2021年大作业</string>
     <string name="app_description">
-        - 视频源来源于搜狐视频网站，最新院线大片，热播剧随时看\n
-        - 基于ijkplayer，支持RMVB，MKV，WMA，MP4等主流音视频格式\n
-        - 支持收藏影视剧\n
-        - 直播高清央视及卫视节目\n
+        ※视频源来源于搜狐视频网站，最新院线大片，热播剧随时看\n
+        ※播放器基于ijkplayer\n
+        ※支持RMVB，MKV，WMA，MP4等主流音视频格式\n
+        ※支持收藏影视剧\n
+        ※支持直播高清央视及卫视节目\n
     </string>
 
     <string name="channel_series">电视剧</string>
@@ -24,7 +26,6 @@
     <string name="channel_live">直播</string>
     <string name="channel_favorite">收藏</string>
 
-    <string name="site_letv">乐视视频</string>
     <string name="site_sohu">搜狐视频</string>
 
     <string name="data_failed_tip">数据加载失败,请检查网络!</string>
