@@ -12,7 +12,6 @@ import android.view.View;
 import android.widget.AbsListView;
 import android.widget.GridView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.tcmyxc.R;
 import com.tcmyxc.adapter.FavoriteAdapter;
@@ -22,7 +21,7 @@ import com.tcmyxc.model.AlbumList;
 import java.util.ArrayList;
 import java.util.List;
 
-import db.FavoriteDBHelper;
+import com.tcmyxc.db.FavoriteDBHelper;
 
 /**
  * @author : 徐文祥

@@ -3,16 +3,12 @@ package com.tcmyxc.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.view.MenuItem;
 
 import com.tcmyxc.R;
 import com.tcmyxc.adapter.SitePagerAdapter;
-import com.tcmyxc.fragment.DetailListFragment;
 import com.tcmyxc.model.Channel;
-
-import java.util.HashMap;
 
 /**
  * @author : 徐文祥

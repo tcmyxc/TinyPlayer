@@ -25,7 +25,7 @@ import com.tcmyxc.model.sohu.Video;
 import com.tcmyxc.util.ImageUtil;
 import com.tcmyxc.util.LOG;
 
-import db.FavoriteDBHelper;
+import com.tcmyxc.db.FavoriteDBHelper;
 
 /**
  * @author : 徐文祥
